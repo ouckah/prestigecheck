@@ -1,26 +1,30 @@
 import ComparisonSection from "@/components/comparison-section"
 import { Trophy } from "lucide-react"
 import Link from "next/link"
+import { AuthButton } from "@/components/auth/auth-button"
+import { UtcAnnouncementBanner } from "@/components/utc-announcement-banner"
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="border-b">
-        <div className="container flex h-16 items-center px-4 md:px-6">
+        <div className="container flex h-16 items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
             <Trophy className="h-6 w-6 text-yellow-500" />
             <span className="text-xl font-bold">Prestige Check</span>
           </Link>
-          <nav className="ml-auto flex gap-4 sm:gap-6">
+          <nav className="flex gap-4 sm:gap-6 items-center">
             <Link href="/stats" className="text-sm font-medium hover:underline underline-offset-4">
               Global Stats
             </Link>
             <Link href="/about" className="text-sm font-medium hover:underline underline-offset-4">
               About
             </Link>
+            <AuthButton />
           </nav>
         </div>
       </header>
+      <UtcAnnouncementBanner />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 mt-8">
           <div className="container px-4 md:px-6">
@@ -47,6 +51,9 @@ export default function Home() {
             </Link>
             <Link href="/terms" className="text-sm text-gray-500 hover:underline underline-offset-4">
               Terms
+            </Link>
+            <Link href="/admin" className="text-sm text-gray-500 hover:underline underline-offset-4">
+              Admin
             </Link>
           </div>
         </div>

@@ -3,84 +3,39 @@ import { Trophy, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { createServerClient } from "@/lib/supabase"
+import { AuthButton } from "@/components/auth/auth-button"
 
-// Sample company data with stats
-const companies = [
-  {
-    id: 1,
-    name: "Google",
-    elo: 1850,
-    votes: 12500,
-    winPercentage: 68,
-    rank: 3,
-  },
-  {
-    id: 2,
-    name: "Apple",
-    elo: 1920,
-    votes: 15000,
-    winPercentage: 75,
-    rank: 1,
-  },
-  {
-    id: 3,
-    name: "Microsoft",
-    elo: 1780,
-    votes: 11000,
-    winPercentage: 62,
-    rank: 4,
-  },
-  {
-    id: 4,
-    name: "Amazon",
-    elo: 1750,
-    votes: 10500,
-    winPercentage: 58,
-    rank: 5,
-  },
-  {
-    id: 5,
-    name: "Meta",
-    elo: 1680,
-    votes: 9000,
-    winPercentage: 52,
-    rank: 7,
-  },
-  {
-    id: 6,
-    name: "Netflix",
-    elo: 1620,
-    votes: 7500,
-    winPercentage: 45,
-    rank: 8,
-  },
-  {
-    id: 7,
-    name: "Tesla",
-    elo: 1700,
-    votes: 9500,
-    winPercentage: 55,
-    rank: 6,
-  },
-  {
-    id: 8,
-    name: "Nvidia",
-    elo: 1800,
-    votes: 8000,
-    winPercentage: 65,
-    rank: 2,
-  },
-].sort((a, b) => a.rank - b.rank)
+export default async function StatsPage() {
+  const supabase = createServerClient()
 
-export default function StatsPage() {
+  // Get all companies ordered by ELO
+  const { data: companies } = await supabase.from("companies").select("*").order("elo", { ascending: false })
+
+  // Add rank to each company
+  const rankedCompanies =
+    companies?.map((company, index) => ({
+      ...company,
+      rank: index + 1,
+    })) || []
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="border-b">
-        <div className="container flex h-16 items-center px-4 md:px-6">
+        <div className="container flex h-16 items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
             <Trophy className="h-6 w-6 text-yellow-500" />
             <span className="text-xl font-bold">Prestige Check</span>
           </Link>
+          <nav className="flex gap-4 sm:gap-6 items-center">
+            <Link href="/stats" className="text-sm font-medium hover:underline underline-offset-4">
+              Global Stats
+            </Link>
+            <Link href="/about" className="text-sm font-medium hover:underline underline-offset-4">
+              About
+            </Link>
+            <AuthButton />
+          </nav>
         </div>
       </header>
       <main className="flex-1">
@@ -93,7 +48,8 @@ export default function StatsPage() {
               </p>
             </div>
 
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto space-y-12">
+              {/* Company Rankings Table */}
               <Card>
                 <CardHeader>
                   <CardTitle>Company Rankings</CardTitle>
@@ -110,7 +66,7 @@ export default function StatsPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {companies.map((company) => (
+                      {rankedCompanies.map((company) => (
                         <TableRow key={company.id}>
                           <TableCell className="font-medium">
                             {company.rank === 1 ? (
@@ -123,7 +79,7 @@ export default function StatsPage() {
                           </TableCell>
                           <TableCell>{company.name}</TableCell>
                           <TableCell className="text-right">{company.elo}</TableCell>
-                          <TableCell className="text-right">{company.winPercentage}%</TableCell>
+                          <TableCell className="text-right">{company.win_percentage}%</TableCell>
                           <TableCell className="text-right">{company.votes.toLocaleString()}</TableCell>
                         </TableRow>
                       ))}
